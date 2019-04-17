@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Index</title>
 
+    <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
+<!--    <link rel="stylesheet" media="all" type="text/css" href="/css/bootstrap.min.css">-->
     <!-- Add stylesheets here -->
 </head>
 <body>
@@ -12,14 +14,19 @@
 
 </nav>
 <main>
-    INDEX!
+    <div class="container">
+        <h1>The journey with SecretChat starts here.</h1>
 
-    <div>
-        <p th:text="'Hello, ' + ${message}"></p>
+        <div>
+            <p th:text="'Hello, ' + ${message}"></p>
+        </div>
+        <button type="button" class="btn btn-primary">Click Me!</button>
     </div>
 </main>
 
 <!-- Add Javascript here -->
+<script th:src="@{/js/jquery-3.4.0.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
 
 </body>
 </html>
