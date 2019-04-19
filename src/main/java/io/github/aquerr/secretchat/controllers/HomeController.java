@@ -14,6 +14,9 @@ public class HomeController
     @GetMapping("/")
     public String index(final Model model)
     {
+        //TODO: If user is not logged in then show default index page
+        //TODO: If user is logged in then show page with user name in the upper right corner.
+
         model.addAttribute("message", message);
         return "index";
     }

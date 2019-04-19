@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,19 +10,37 @@
     <!-- Add stylesheets here -->
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-
+<!--<main class="container">-->
+<nav class="navbar navbar-dark bg-dark">
+    <a href="/">
+        <h2 class="left navbar-text">
+            SecretChat
+        </h2>
+    </a>
+    <ul>
+        <li>
+            <a href="/login">Zaloguj</a>
+        </li>
+        <li>
+            <a href="/register">Zarejestruj</a>
+        </li>
+    </ul>
 </nav>
-<main>
-    <div class="container">
-        <h1>The journey with SecretChat starts here.</h1>
+<div class="container">
+    <h1>The journey with SecretChat starts here.</h1>
 
-        <div>
-            <p th:text="'Hello, ' + ${message}"></p>
-        </div>
-        <button type="button" class="btn btn-primary">Click Me!</button>
+    <div>
+        <p th:text="'Hello, ' + ${message}"></p>
     </div>
-</main>
+    <button type="button" class="btn btn-primary">Click Me!</button>
+</div>
+<!--</main>-->
+
+<footer class="footer footer-dark">
+    <div>First item</div>
+    <div>Second Item</div>
+    <div>Third Item</div>
+</footer>
 
 <!-- Add Javascript here -->
 <script th:src="@{/js/jquery-3.4.0.min.js}"></script>

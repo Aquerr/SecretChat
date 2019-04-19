@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rejestracja</title>
+
+    <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <a href="/">
+        <h2 class="left navbar-text">
+            SecretChat
+        </h2>
+    </a>
+    <ul>
+        <li>
+            <a href="/login">Zaloguj</a>
+        </li>
+        <li>
+            <a href="/register">Zarejestruj</a>
+        </li>
+    </ul>
+</nav>
+    <div class="container">
+        <form id="loginForm" onsubmit="postUser">
+            <div>
+                <label class="col-form-label" for="username">Nazwa użytkownika</label>
+                <input class="form-control" id="username" placeholder="Wprowadź nazwę użytkownika" required>
+            </div>
+            <div>
+                <label class="col-form-label" for="email">E-mail</label>
+                <input class="form-control" id="email" type="email" placeholder="Wprowadź adres e-mail" required>
+            </div>
+            <div>
+                <label class="col-form-label" for="password">Hasło</label>
+                <input class="form-control" id="password" type="password" placeholder="Wprowadź hasło" required>
+            </div>
+            <div>
+                <label class="col-form-label" for="repeatedPassword">Powtórz hasło</label>
+                <input class="form-control" id="repeatedPassword" type="password" aria-hidden="true" placeholder="Powtórz hasło" required>
+            </div>
+            <!--<button class="btn btn-primary" type="submit">Rejestruj</button>-->
+            <button class="btn btn-primary" type="button" onclick="postUser();">Rejestruj</button>
+        </form>
+    </div>
+</body>
+
+<script th:src="@{/js/jquery-3.4.0.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+</html>
+
+
+<script>
+    function postUser() {
+        console.log("Logging in...");
+        let username = $("#username").val();
+        let password = $("#password").val();
+        let repeatedPassword = $("#repeatedPassword").val();
+        let email = $("#email").val();
+
+        let json = {};
+        json["username"] = username;
+        json["password"] = password;
+        json["repeatedPassword"] = repeatedPassword;
+        json["email"] = email;
+
+        console.log(json);
+
+        $.ajax({
+            type: "POST",
+            url: "/register",
+            contentType: "application/json",
+            data: JSON.stringify(json),
+            success: function(data) {
+                console.log("success!");
+                console.log(JSON.stringify(data));
+            },
+            error: function(data) {
+                console.log(data);
+                if(data.responseJSON.message == "406 This email is already in use!")
+                {
+                    $("#email").val("");
+                    $("#email").parent().addClass("has-error");
+                }
+            }
+        });
+    }
+</script>
