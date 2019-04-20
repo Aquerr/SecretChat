@@ -9,22 +9,10 @@
 
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
-    <a href="/">
-        <h2 class="left navbar-text">
-            SecretChat
-        </h2>
-    </a>
-    <ul>
-        <li>
-            <a href="/login">Zaloguj</a>
-        </li>
-        <li>
-            <a href="/register">Zarejestruj</a>
-        </li>
-    </ul>
-</nav>
+<div th:replace="fragments/header"></div>
     ERROR!
 Stacktrace: <span th:text="${stacktrace}"></span>
+
+<div th:replace="fragments/footer"></div>
 </body>
 </html>

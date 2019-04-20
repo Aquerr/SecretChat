@@ -7,21 +7,9 @@
     <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
-    <a href="/">
-        <h2 class="left navbar-text">
-            SecretChat
-        </h2>
-    </a>
-    <ul>
-        <li>
-            <a href="/login">Zaloguj</a>
-        </li>
-        <li>
-            <a href="/register">Zarejestruj</a>
-        </li>
-    </ul>
-</nav>
+<div th:replace="fragments/header"></div>
 
+
+<div th:replace="fragments/footer"></div>
 </body>
 </html>
