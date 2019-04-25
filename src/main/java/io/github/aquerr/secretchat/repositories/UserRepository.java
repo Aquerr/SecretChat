@@ -4,6 +4,7 @@ import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.models.UserCredentials;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class UserRepository
     private final List<UserCredentials> userCredentialsList = new ArrayList<>();
 
     {
-        userList.add(new User(1, "Bartek", "nerdi@gmail.com",23,  "Łódzkie", "Jestem krejzol. Jak chcesz pogadać to pisz! :D"));
-        userList.add(new User(2, "Zbyszko", "zbyszko@bogdaniec.pl" ,34, "Świat", "DO BOJU!"));
-        userList.add(new User(3, "Kasia", "kasiuniaaa@onet.pl" ,28, "Wrocław", "Lubię psy, kino i zabawę makijażem."));
+        userList.add(new User(1, "Bartek", "nerdi@gmail.com",23,  "Łódzkie", "Jestem krejzol. Jak chcesz pogadać to pisz! :D", LocalDate.now()));
+        userList.add(new User(2, "Zbyszko", "zbyszko@bogdaniec.pl" ,34, "Świat", "DO BOJU!", LocalDate.of(2019, 1, 4)));
+        userList.add(new User(3, "Kasia", "kasiuniaaa@onet.pl" ,28, "Wrocław", "Lubię psy, kino i zabawę makijażem.", LocalDate.of(2018, 5, 24)));
 
         userCredentialsList.add(new UserCredentials(1, "Nerdi", "nerdi@gmail.com" ,"brzuszek"));
         userCredentialsList.add(new UserCredentials(2, "Zbyszko", "zbyszko@bogdaniec.pl" , "Bogdaniec"));

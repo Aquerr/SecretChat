@@ -2,6 +2,8 @@ package io.github.aquerr.secretchat.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
+
 public class User
 {
     @JsonProperty(defaultValue = "0")
@@ -22,7 +24,10 @@ public class User
     @JsonProperty(required = true)
     private final String email;
 
-    public User(final int id, final String name, String email, final int age, final String location, final String description)
+    @JsonProperty
+    private final LocalDate registrationDate;
+
+    public User(final int id, final String name, String email, final int age, final String location, final String description, final LocalDate registrationDate)
     {
         this.id = id; //0 = new user in the storage
 
@@ -31,6 +36,7 @@ public class User
         this.age = age;
         this.location = location;
         this.description = description;
+        this.registrationDate = registrationDate;
     }
 
     public int getId()
@@ -61,5 +67,10 @@ public class User
     public String getEmail()
     {
         return email;
+    }
+
+    public LocalDate getRegistrationDate()
+    {
+        return registrationDate;
     }
 }

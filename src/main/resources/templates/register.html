@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Rejestracja</title>
-
-    <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
-</head>
-<body>
-<div th:replace="fragments/header"></div>
-
     <div class="container">
         <form id="loginForm" onsubmit="postUser">
             <div>
@@ -28,26 +17,25 @@
                 <input class="form-control" id="repeatedPassword" type="password" aria-hidden="true" placeholder="Powtórz hasło" required>
             </div>
             <!--<button class="btn btn-primary" type="submit">Rejestruj</button>-->
-            <button class="btn btn-primary" type="button" onclick="postUser();">Rejestruj</button>
+            <button class="btn btn-primary" type="button" onclick="postUser();">Zarejestruj</button>
         </form>
     </div>
-</body>
-
-<div th:replace="fragments/footer"></div>
-
-<script th:src="@{/js/jquery-3.4.0.min.js}"></script>
-<script th:src="@{/js/bootstrap.min.js}"></script>
-
-</html>
-
 
 <script>
     function postUser() {
-        console.log("Logging in...");
+        console.log("Registering...");
         let username = $("#username").val();
         let password = $("#password").val();
         let repeatedPassword = $("#repeatedPassword").val();
         let email = $("#email").val();
+
+        let cookies = window.cookie;
+        console.log(cookies);
+
+        window.cookie = "username=Nerdi; expires=Fri, 3 Aug 2019 20:47:11 UTC; path=/";
+        console.log(window.cookie);
+        // window.cookie = "username=Nerdi; token=2213841273";
+        // console.log(window.cookie);
 
         let json = {};
         json["username"] = username;
@@ -68,7 +56,7 @@
             },
             error: function(data) {
                 console.log(data);
-                if(data.responseJSON.message == "406 This email is already in use!")
+                if(data.responseText == "406 This email is already in use!")
                 {
                     $("#email").val("");
                     $("#email").parent().addClass("has-error");

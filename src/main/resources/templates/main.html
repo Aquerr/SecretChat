@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Main</title>
+
+    <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
+<!--    <link rel="stylesheet" th:href="@{/css/all.css}"> &lt;!&ndash; Font Awesome &ndash;&gt;-->
+
+    <!-- Add Javascript here -->
+    <script type="text/javascript" th:src="@{/js/jquery-3.4.0.min.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/all.js}"></script> <!-- Font Awesome -->
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+    <!-- Add stylesheets here -->
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+
+<div th:replace="${content}"></div>
+
+<div th:replace="fragments/footer"></div>
+
+</body>
+</html>

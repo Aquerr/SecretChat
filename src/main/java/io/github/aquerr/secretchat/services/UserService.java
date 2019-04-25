@@ -6,11 +6,19 @@ import io.github.aquerr.secretchat.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class UserService
 {
+    public static final Map<String, String> INLOGGED_USERS = new HashMap<>();
+
     @Autowired
     private UserRepository userRepository;
 
@@ -19,8 +27,59 @@ public class UserService
 
     }
 
-    public User login(final UserCredentials userCredentials)
+    public User login(final String username, final String emailAddress, final String plainPassword)
     {
+        UserCredentials userCredentials = null;
+        for (final UserCredentials userCreds : this.userRepository.getUserCredentialsList())
+        {
+            if (!username.equals(""))
+            {
+                if (userCreds.getUsername().equals(username))
+                {
+                    userCredentials = userCreds;
+                    break;
+                }
+            }
+            else if (!emailAddress.equals(""))
+            {
+                if (userCreds.getEmail().equals(emailAddress))
+                {
+                    userCredentials = userCreds;
+                    break;
+                }
+            }
+        }
+
+        if (userCredentials == null)
+            return null; //Or error
+
+        try
+        {
+            final boolean isCorrect = checkPassword(plainPassword, userCredentials.getPasswordHash());
+
+            if (isCorrect)
+            {
+                final UserCredentials finalUserCredentials = userCredentials;
+                final Optional<User> optionalUser = this.userRepository.getUserList().stream().filter(x->x.getId() == finalUserCredentials.getUserId()).findFirst();
+                if (optionalUser.isPresent())
+                {
+                    return optionalUser.get();
+                }
+                else
+                {
+                    return null; //Or error
+                }
+            }
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InvalidKeySpecException e)
+        {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -30,8 +89,27 @@ public class UserService
         //Create new User object and save it as well. Id must be equal to user credentials id.
 
         int newId = getLastFreeUserId();
-        final UserCredentials userCredentials = new UserCredentials(newId, login, emailAddress, password);
-        final User user = new User(newId, login, emailAddress, 0, "", "");
+        String base64EncodedPasswordWithSalt = "";
+        try
+        {
+            base64EncodedPasswordWithSalt = hashPassword(password);
+//            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+//            messageDigest.update(password.getBytes());
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InvalidKeySpecException e)
+        {
+            e.printStackTrace();
+        }
+
+        if (base64EncodedPasswordWithSalt.equals(""))
+            return null;
+
+        final UserCredentials userCredentials = new UserCredentials(newId, login, emailAddress, base64EncodedPasswordWithSalt);
+        final User user = new User(newId, login, emailAddress, 0, "", "", LocalDate.now());
 
         this.userRepository.addUserCredentials(userCredentials);
         this.userRepository.addUser(user);
@@ -121,5 +199,46 @@ public class UserService
                 return true;
         }
         return false;
+    }
+
+    private byte[] generateSalt(int size)
+    {
+        byte[] saltBytes = new byte[size];
+        final SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(saltBytes);
+        return saltBytes;
+    }
+
+    private String hashPassword(final String password) throws InvalidKeySpecException, NoSuchAlgorithmException
+    {
+        byte[] salt = generateSalt(20);
+        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt,65536, 128);
+        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] hashBytes = secretKeyFactory.generateSecret(keySpec).getEncoded();
+        final Base64.Encoder base64Encoder = Base64.getEncoder();
+        String base64EncodedPassword = base64Encoder.encodeToString(hashBytes);
+        String encodedSalt = base64Encoder.encodeToString(salt);
+        System.out.println(base64EncodedPassword);
+        System.out.println(encodedSalt);
+
+        base64EncodedPassword = encodedSalt + "$" + base64EncodedPassword;
+
+        System.out.println(base64EncodedPassword);
+        return base64EncodedPassword;
+    }
+
+    private boolean checkPassword(final String password, final String storedPasswordHash) throws NoSuchAlgorithmException, InvalidKeySpecException
+    {
+        final Base64.Decoder decoder = Base64.getDecoder();
+        final String[] saltAndPasswordHash = storedPasswordHash.split("\\$");
+
+        final byte[] saltBytes = decoder.decode(saltAndPasswordHash[0]);
+        final byte[] passwordBytes = decoder.decode(saltAndPasswordHash[1]);
+
+        final PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), saltBytes,65536, 128);
+        final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] hashBytes = secretKeyFactory.generateSecret(keySpec).getEncoded();
+
+        return Arrays.equals(passwordBytes, hashBytes);
     }
 }

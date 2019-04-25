@@ -1,15 +1,43 @@
-<!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Zaloguj</title>
+<div class="container" style="min-height: 800px;">
+    <form id="loginForm" th:action="@{/login}" method="post">
+        <div>
+            <label class="col-form-label" for="login">Login</label>
+            <input name="login" class="form-control" id="login" placeholder="Wprowadź nazwę użytkownika lub email" required>
+        </div>
+        <div>
+            <label class="col-form-label" for="password">Hasło</label>
+            <input name="password" class="form-control" id="password" type="password" placeholder="Wprowadź hasło" required>
+        </div>
+        <!--<button class="btn btn-primary" type="submit">Rejestruj</button>-->
+        <button class="btn btn-primary" type="submit">Zaloguj</button>
+    </form>
+</div>
 
-    <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
-</head>
-<body>
-<div th:replace="fragments/header"></div>
+<script>
+    function login() {
+        console.log("Logging in...");
+        let login = $("#login").val();
+        let password = $("#password").val();
 
+        let json = {};
+        json["login"] = login;
+        json["password"] = password;
 
-<div th:replace="fragments/footer"></div>
-</body>
-</html>
+        console.log(json);
+
+        $.ajax({
+            type: "POST",
+            url: "/login",
+            contentType: "application/json",
+            data: JSON.stringify(json),
+            success: function(data) {
+                console.log("success!");
+                console.log(JSON.stringify(data));
+            },
+            error: function(data) {
+                console.log(data);
+                alert("Could not log in!");
+            }
+        });
+    }
+</script>

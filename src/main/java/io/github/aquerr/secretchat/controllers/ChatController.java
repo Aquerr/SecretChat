@@ -11,6 +11,6 @@ public class ChatController
     @GetMapping(path = "/chat")
     public String test(Model model)
     {
-        return "error";
+        return "errorpage";
     }
 }

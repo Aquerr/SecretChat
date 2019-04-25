@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Index</title>
+
+    <link rel="stylesheet" media="all" type="text/css" th:href="@{/css/bootstrap.min.css}">
+    <!--    <link rel="stylesheet" media="all" type="text/css" href="/css/bootstrap.min.css">-->
+    <!-- Add stylesheets here -->
+</head>
+<body>
+<!--<main class="container">-->
+<div th:replace="fragments/header"></div>
+<div class="container" style="min-height: 600px;">
+    <h1>The journey with SecretChat starts here.</h1>
+
+    <div>
+        <p th:text="'Hello, ' + ${message}"></p>
+        <p th:text="'Logged in as ' + ${username}"></p>
+    </div>
+    <button type="button" class="btn btn-primary">Click Me!</button>
+</div>
+<!--</main>-->
+
+<div th:replace="fragments/footer"></div>
+
+<!-- Add Javascript here -->
+<script th:src="@{/js/jquery-3.4.0.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<script>
+    console.log(window.cookie);
+</script>
+
+</body>
+</html>
