@@ -4,7 +4,6 @@ import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

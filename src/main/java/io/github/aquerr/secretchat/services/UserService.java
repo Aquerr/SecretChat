@@ -17,8 +17,6 @@ import java.util.*;
 @Service
 public class UserService
 {
-    public static final Map<String, String> INLOGGED_USERS = new HashMap<>();
-
     @Autowired
     private UserRepository userRepository;
 
@@ -240,5 +238,11 @@ public class UserService
         byte[] hashBytes = secretKeyFactory.generateSecret(keySpec).getEncoded();
 
         return Arrays.equals(passwordBytes, hashBytes);
+    }
+
+    public User getUser(final String username)
+    {
+        final List<User> userList = this.userRepository.getUserList();
+        return userList.stream().filter(x->x.getName().equals(username)).findFirst().orElse(null);
     }
 }

@@ -1,3 +1,29 @@
-<div>
-    HELLO MYPROFILE!
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<div class="container" style="min-height: 800px;">
+    <div class="profile">
+            <div class="row">
+<!--                <img th:src="${user.avatar}">-->
+                <div class="col-md-2" th:text="${user.name}"></div>
+                <div class="col-md-2" th:text="${user.age}"></div>
+                <div class="col-md-2" th:text="${user.location}"></div>
+            </div>
+            <div class="row" th:text="${user.description}"></div>
+    </div>
+    <div class="chats-container" hidden>
+        <div class="chat-tab">
+            <label class="chat-tab-label"></label>
+        </div>
+        <input placeholder="Wprowadź tu swoją wiadomość">
+    </div>
+
+    <div class="chat-tab-template" hidden>
+        <label class="chat-tab-label"></label>
+    </div>
+
+    <p id="messageTemplate" hidden>
+        <span class="message-time"></span>
+        <span class="message-author"></span>:
+        <span class="message-body"></span>
+    </p>
 </div>
+</html>
