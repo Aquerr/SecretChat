@@ -2,6 +2,7 @@ package io.github.aquerr.secretchat.services;
 
 import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.models.UserCredentials;
+import io.github.aquerr.secretchat.repositories.UserMongoRepository;
 import io.github.aquerr.secretchat.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class UserService
     public User login(final String username, final String emailAddress, final String plainPassword)
     {
         UserCredentials userCredentials = null;
-        for (final UserCredentials userCreds : this.userRepository.getUserCredentialsList())
+        for (final UserCredentials userCreds : this.userRepository.getUserCredentials())
         {
             if (!username.equals(""))
             {
@@ -58,7 +59,7 @@ public class UserService
             if (isCorrect)
             {
                 final UserCredentials finalUserCredentials = userCredentials;
-                final Optional<User> optionalUser = this.userRepository.getUserList().stream().filter(x->x.getId() == finalUserCredentials.getUserId()).findFirst();
+                final Optional<User> optionalUser = this.userRepository.getUsers().stream().filter(x->x.getId() == finalUserCredentials.getUserId()).findFirst();
                 if (optionalUser.isPresent())
                 {
                     return optionalUser.get();
@@ -156,7 +157,7 @@ public class UserService
 
     public synchronized boolean isLoginAvailable(final String login)
     {
-        final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentialsList();
+        final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentials();
         for (final UserCredentials userCredentials : userCredentialsList)
         {
             if (userCredentials.getUsername().equals(login))
@@ -168,7 +169,7 @@ public class UserService
 
     public synchronized boolean isEmailAvailable(final String email)
     {
-        final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentialsList();
+        final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentials();
         for (final UserCredentials userCredentials : userCredentialsList)
         {
             if (userCredentials.getEmail().equals(email))
@@ -190,7 +191,7 @@ public class UserService
 
     private synchronized boolean existsId(int id)
     {
-        final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentialsList();
+        final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentials();
         for (final UserCredentials userCredentials : userCredentialsList)
         {
             if (userCredentials.getUserId() == id)
@@ -242,7 +243,7 @@ public class UserService
 
     public User getUser(final String username)
     {
-        final List<User> userList = this.userRepository.getUserList();
+        final List<User> userList = this.userRepository.getUsers();
         return userList.stream().filter(x->x.getName().equals(username)).findFirst().orElse(null);
     }
 }

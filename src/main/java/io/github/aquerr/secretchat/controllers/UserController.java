@@ -34,7 +34,7 @@ public class UserController
 
         if (usernameObject == null)
         {
-            //TODO: Thorw an error here...
+            //TODO: Throw an error here...
             try
             {
                 httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "You must be logged in to view this page.");

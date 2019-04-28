@@ -1,5 +1,5 @@
     <div class="container">
-        <form id="loginForm" onsubmit="postUser">
+        <form id="loginForm">
             <div>
                 <label class="col-form-label" for="username">Nazwa użytkownika</label>
                 <input class="form-control" id="username" placeholder="Wprowadź nazwę użytkownika" required>
@@ -17,11 +17,26 @@
                 <input class="form-control" id="repeatedPassword" type="password" aria-hidden="true" placeholder="Powtórz hasło" required>
             </div>
             <!--<button class="btn btn-primary" type="submit">Rejestruj</button>-->
-            <button class="btn btn-primary" type="button" onclick="postUser();">Zarejestruj</button>
+            <button class="btn btn-primary" type="button" id="register">Zarejestruj</button>
         </form>
     </div>
 
+    <div id="messageModal" class="modal">
+        <div class="modal-header">
+            <span class="fas fa-times"></span>
+            <h2>Błąd!</h2>
+        </div>
+        <div class="modal-body">
+            <div class="modal-content" id="modal-content">
+            </div>
+        </div>
+    </div>
+
 <script>
+   $("#register").on("click", function () {
+     postUser();
+   });
+
     function postUser() {
         console.log("Registering...");
         let username = $("#username").val();
@@ -29,13 +44,15 @@
         let repeatedPassword = $("#repeatedPassword").val();
         let email = $("#email").val();
 
-        let cookies = window.cookie;
-        console.log(cookies);
+        // let cookies = window.cookie;
+        // console.log(cookies);
 
-        window.cookie = "username=Nerdi; expires=Fri, 3 Aug 2019 20:47:11 UTC; path=/";
-        console.log(window.cookie);
+        // window.cookie = "username=Nerdi; expires=Fri, 3 Aug 2019 20:47:11 UTC; path=/";
+        // console.log(window.cookie);
         // window.cookie = "username=Nerdi; token=2213841273";
         // console.log(window.cookie);
+
+        //TODO: Add method for checking input fields...
 
         let json = {};
         json["username"] = username;
@@ -55,12 +72,26 @@
                 console.log(JSON.stringify(data));
             },
             error: function(data) {
+                console.log("error!");
                 console.log(data);
-                if(data.responseText == "406 This email is already in use!")
+                if(data.responseText === "406 This email is already in use!")
                 {
                     $("#email").val("");
                     $("#email").parent().addClass("has-error");
                 }
+                // if(data.responseText === "400 Email Address is not in correct format.")
+                // {
+                //     $("#email").val("");
+                //     $("#email").parent().addClass("has-error");
+                // }
+                // if(data.responseText === "412 Passwords are not the same!")
+                // {
+                //     $("#password").parent().addClass("has-error");
+                //     $("#repeatedPassword").parent().addClass("has-error");
+                // }
+                //
+                // $("#messageModal").find("#modal-content").text = data.responseText;
+                // $("#messageModal").modal("show");
             }
         });
     }

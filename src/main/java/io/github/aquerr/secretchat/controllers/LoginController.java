@@ -156,8 +156,8 @@ public class LoginController
 //    }
 
     @ResponseBody
-    @PostMapping(path = "/register", consumes = "application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity register(@RequestBody final Map<String, Object> jsonNode, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException
+    @PostMapping(path = "/register", consumes = "application/json")
+    public ResponseEntity<?> register(@RequestBody final Map<String, Object> jsonNode, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException
     {
         LOGGER.info("Registering...");
 //        final Principal userPrincipal = httpServletRequest.getUserPrincipal();
@@ -182,28 +182,33 @@ public class LoginController
         final String repeatedPassword = String.valueOf(jsonNode.get("repeatedPassword"));
         final String emailAddress = String.valueOf(jsonNode.get("email"));
 
+        if (!emailPattern.matcher(emailAddress).matches())
+        {
+            return ResponseEntity.badRequest().body("Email Address is not in correct format.");
+        }
+
         if (username.equals("") || password.equals("") || repeatedPassword.equals("") || emailAddress.equals(""))
         {
 //            httpServletResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Not all fields have been specified.");
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Not all fields have been specified.");
+            return ResponseEntity.badRequest().body("Not all fields have been specified.");
         }
 
         //TODO: Consider if this check is necessary. Having it only in the view should be fine.
         if (!password.equals(repeatedPassword))
         {
 //            httpServletResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Passwords are not the same!");
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Passwords are not the same!");
+            return ResponseEntity.badRequest().body("Passwords are not the same!");
         }
 
         if (!this.userService.isLoginAvailable(username))
         {
 //            httpServletResponse.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "This login is already in use!");
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("This login is already in use!");
+            return ResponseEntity.badRequest().body("This login is already in use!");
         }
         if (!this.userService.isEmailAvailable(emailAddress))
         {
 //            httpServletResponse.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "This email is already in use!");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("This email is already in use!");
+            return ResponseEntity.badRequest().body("This email is already in use!");
         }
 
 //        final Object nameTest = httpServletRequest.getSession().getAttribute("username");
