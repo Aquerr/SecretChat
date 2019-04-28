@@ -2,7 +2,6 @@ package io.github.aquerr.secretchat.services;
 
 import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.models.UserCredentials;
-import io.github.aquerr.secretchat.repositories.UserMongoRepository;
 import io.github.aquerr.secretchat.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
