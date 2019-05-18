@@ -20,6 +20,7 @@ public class HomeController
         model.addAttribute("message", message);
         model.addAttribute("username", "");
         model.addAttribute("content", "index");
+        model.addAttribute("title", "Strona Główna");
 
         //TODO: If user is not logged in then show default index page
         //TODO: If user is logged in then show page with user name in the upper right corner.
