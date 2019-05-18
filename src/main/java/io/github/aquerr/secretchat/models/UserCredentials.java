@@ -1,10 +1,16 @@
 package io.github.aquerr.secretchat.models;
 
+import org.springframework.data.annotation.Id;
+
 public class UserCredentials
 {
+    @Id
     private final int userId;
+
     private final String username;
+
     private final String email;
+
     private final String passwordHash;
 
     public UserCredentials(final int userId, final String username, final String email, final String passwordHash)

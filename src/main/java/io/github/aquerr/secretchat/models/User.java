@@ -1,12 +1,14 @@
 package io.github.aquerr.secretchat.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 
 public class User
 {
     @JsonProperty(defaultValue = "0")
+    @Id
     private final int id;
 
     @JsonProperty(required = true)
