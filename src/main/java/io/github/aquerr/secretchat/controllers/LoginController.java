@@ -39,6 +39,7 @@ public class LoginController
     public String login(final Model model)
     {
         model.addAttribute("content", "login");
+        model.addAttribute("title", "Zaloguj");
         return "main";
     }
 
@@ -46,6 +47,7 @@ public class LoginController
     public String register(final Model model)
     {
         model.addAttribute("content", "register");
+        model.addAttribute("title", "Zarejestruj");
         return "main";
     }
 

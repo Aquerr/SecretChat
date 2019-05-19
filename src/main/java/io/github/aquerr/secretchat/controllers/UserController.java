@@ -53,6 +53,7 @@ public class UserController
         model.addAttribute("content", "myprofile");
         model.addAttribute("username", username);
         model.addAttribute("user", user);
+        model.addAttribute("title", "Mój Profil");
         return "main";
     }
 }
