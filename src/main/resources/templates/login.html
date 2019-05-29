@@ -1,5 +1,5 @@
 <div class="container" style="min-height: 800px;">
-    <form id="loginForm" th:action="@{/login}" method="post">
+    <form id="loginForm">
         <div>
             <label class="col-form-label" for="login">Login</label>
             <input name="login" class="form-control" id="login" placeholder="Wprowadź nazwę użytkownika lub email" required>
@@ -8,12 +8,42 @@
             <label class="col-form-label" for="password">Hasło</label>
             <input name="password" class="form-control" id="password" type="password" placeholder="Wprowadź hasło" required>
         </div>
-        <!--<button class="btn btn-primary" type="submit">Rejestruj</button>-->
-        <button class="btn btn-primary" type="submit">Zaloguj</button>
+        <button id="loginButton" type="submit" class="btn btn-primary">Zaloguj</button>
     </form>
 </div>
 
+<div id="modalMessage" tabindex="-1" class="modal fade" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Błąd!</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="float: right;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalBodyMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    $(document).ready(function () {
+        $("#loginForm").submit(function (event) {
+            event.preventDefault();
+
+            login();
+        });
+
+        $("#modalMessage").on("hidden.bs.modal", function () {
+            $("#modalBodyMessage").text("");
+        })
+    });
+
     function login() {
         console.log("Logging in...");
         let login = $("#login").val();
@@ -24,20 +54,30 @@
         json["password"] = password;
 
         console.log(json);
-
         $.ajax({
             type: "POST",
             url: "/login",
             contentType: "application/json",
+            cache: false,
+            // dataType: "text/plain;charset=UTF-8",
             data: JSON.stringify(json),
-            success: function(data) {
+            success: function (data, status, jqXHR) {
                 console.log("success!");
                 console.log(JSON.stringify(data));
+                window.location.href = "/";
             },
             error: function(data) {
                 console.log(data);
-                alert("Could not log in!");
+                console.log("Could not log in!");
+                $("#login").val("");
+                $("#password").val("");
+                $("login").parent().addClass("has-error");
+                $("#password").parent().addClass("has-error");
+                $("#modalBodyMessage").text(data.responseText);
+                $("#modalMessage").modal("show");
             }
+        }).done(function (data) {
+            console.log(data);
         });
     }
 </script>

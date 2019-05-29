@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +24,9 @@ import java.util.regex.Pattern;
 public class LoginController
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("([A-Za-z_.]*)@([A-Za-z]*)\\.([A-Za-z]*)");
 
     private final UserService userService;
-
-    private Pattern emailPattern = Pattern.compile("([A-Za-z_.]*)@([A-Za-z]*)\\.([A-Za-z]*)");
 
     public LoginController(final UserService userService)
     {
@@ -52,22 +50,27 @@ public class LoginController
     }
 
     @ResponseBody
-    @PostMapping(path = "/login")
-    public ModelAndView login(final String login, final String password, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, final Model model)
+    @PostMapping(path = "/login", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<?> login(@RequestBody(required = false) final Map<String, Object> credentials, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, final Model model) throws IOException
     {
+        if(credentials == null || !credentials.containsKey("login") || !credentials.containsKey("password"))
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payload does not contain login and password!");
+        }
+
+        final String login = String.valueOf(credentials.get("login"));
+        final String password = String.valueOf(credentials.get("password"));
+
         boolean isMail = false;
 
         //If login = mail
-        if (emailPattern.matcher(login).matches())
+        if (EMAIL_PATTERN.matcher(login).matches())
         {
             //Process mail
             isMail = true;
         }
 
         //TODO: Successfully logged in user should get a authentication token instead of username cookie. (I suppose)
-
-//        httpServletRequest.getSession().setAttribute("username", "name");
-//        httpServletRequest.authenticate(httpServletResponse);
 
         User user = null;
 
@@ -82,109 +85,35 @@ public class LoginController
 
         if (user != null)
         {
-//            final HttpSession session = httpServletRequest.getSession(true);
-//            httpServletResponse.addCookie(new Cookie("session", session.getId()));
             httpServletRequest.getSession().setAttribute("username", user.getName());
-            model.addAttribute("username", user.getName());
-//            UserService.INLOGGED_USERS.put(session.getId(), user.getName());
+//            model.addAttribute("username", user.getName());
         }
         else
         {
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not find a user with such login/mail.");
-            try
-            {
-                httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not find a user with such login/mail.");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return new ModelAndView("login");
+//            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+//            httpServletResponse.getWriter().println("BOOM");
+//            httpServletResponse.getWriter().flush();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie znaleziono konta o podanej nazwie użytkownika lub adresie e-mail.");
+//            return;
         }
         LOGGER.info(user.getName() + " has logged in.");
-        model.addAttribute("content", "index");
-
-//        return ResponseEntity.ok("Logged In");
-//        return null;
-        return new ModelAndView("main");
+//        model.addAttribute("content", "index");
+//        httpServletResponse.setStatus(HttpStatus.OK.value());
+//        httpServletResponse.getWriter().println(user.getId());
+        return ResponseEntity.badRequest().body(String.valueOf(user.getId()));
     }
-
-//    @ResponseBody
-//    @PostMapping(path = "/login", consumes = "application/json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    public User login(@RequestBody final Map<String, Object> map, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-//    {
-//        if (!map.containsKey("password") || String.valueOf(map.get("password")).equals(""))
-//            throw new HttpServerErrorException(HttpStatus.PRECONDITION_FAILED, "Password must be specified!");
-//
-//
-//        if (!map.containsKey("login"))
-//            throw new HttpServerErrorException(HttpStatus.PRECONDITION_FAILED, "Username or email must be specified!");
-//
-//        final String login = String.valueOf(map.get("login"));
-//        final String password = String.valueOf(map.get("password"));
-//        boolean isMail = false;
-//
-//        //If login = mail
-//        if (emailPattern.matcher(login).matches())
-//        {
-//            //Process mail
-//            isMail = true;
-//        }
-//
-//        //TODO: Successfully logged in user should get a authentication token instead of username cookie. (I suppose)
-//
-////        httpServletRequest.getSession().setAttribute("username", "name");
-////        httpServletRequest.authenticate(httpServletResponse);
-//
-//        if (isMail)
-//        {
-//            final User user = this.userService.login("", login, password);
-//            if (user != null)
-//            {
-//                HttpSession session = httpServletRequest.getSession(true);
-//                session.setAttribute("username", user.getName());
-////                session.setAttribute("SecretChat-Token", "Token...");
-//                return user;
-//            }
-//            else
-//            {
-//                return null;
-//            }
-//        }
-//        else
-//        {
-//            return this.userService.login(login, "", password);
-//        }
-//    }
 
     @ResponseBody
     @PostMapping(path = "/register", consumes = "application/json")
     public ResponseEntity<?> register(@RequestBody final Map<String, Object> jsonNode, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException
     {
         LOGGER.info("Registering...");
-//        final Principal userPrincipal = httpServletRequest.getUserPrincipal();
-//        final Cookie[] cookies = httpServletRequest.getCookies();
-//        try
-//        {
-//            httpServletRequest.authenticate(httpServletResponse);
-//            httpServletRequest.login("test", "test");
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        catch (ServletException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        final Object test = WebUtils.getCookie(httpServletRequest, "username");
-
         final String username = String.valueOf(jsonNode.get("username"));
         final String password = String.valueOf(jsonNode.get("password"));
         final String repeatedPassword = String.valueOf(jsonNode.get("repeatedPassword"));
         final String emailAddress = String.valueOf(jsonNode.get("email"));
 
-        if (!emailPattern.matcher(emailAddress).matches())
+        if (!EMAIL_PATTERN.matcher(emailAddress).matches())
         {
             return ResponseEntity.badRequest().body("Email Address is not in correct format.");
         }
