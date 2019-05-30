@@ -100,7 +100,7 @@ public class LoginController
 //        model.addAttribute("content", "index");
 //        httpServletResponse.setStatus(HttpStatus.OK.value());
 //        httpServletResponse.getWriter().println(user.getId());
-        return ResponseEntity.badRequest().body(String.valueOf(user.getId()));
+        return ResponseEntity.ok(String.valueOf(user.getId()));
     }
 
     @ResponseBody

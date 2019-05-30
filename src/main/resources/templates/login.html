@@ -10,6 +10,16 @@
         </div>
         <button id="loginButton" type="submit" class="btn btn-primary">Zaloguj</button>
     </form>
+<!--    <div>-->
+<!--        <div id="loader">-->
+<!--            <div>-->
+
+<!--            </div>-->
+<!--            <div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 
 <div id="modalMessage" tabindex="-1" class="modal fade" role="dialog">
@@ -45,6 +55,7 @@
     });
 
     function login() {
+        $("#loader").addClass("loader");
         console.log("Logging in...");
         let login = $("#login").val();
         let password = $("#password").val();
@@ -53,31 +64,35 @@
         json["login"] = login;
         json["password"] = password;
 
-        console.log(json);
-        $.ajax({
-            type: "POST",
-            url: "/login",
-            contentType: "application/json",
-            cache: false,
-            // dataType: "text/plain;charset=UTF-8",
-            data: JSON.stringify(json),
-            success: function (data, status, jqXHR) {
-                console.log("success!");
-                console.log(JSON.stringify(data));
-                window.location.href = "/";
-            },
-            error: function(data) {
+        setTimeout(function () {
+            console.log(json);
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                contentType: "application/json",
+                cache: false,
+                // dataType: "text/plain;charset=UTF-8",
+                data: JSON.stringify(json),
+                success: function (data, status, jqXHR) {
+                    console.log("success!");
+                    console.log(JSON.stringify(data));
+                    $("#loader").removeClass("loader");
+                    window.location.href = "/";
+                },
+                error: function(data) {
+                    console.log(data);
+                    console.log("Could not log in!");
+                    $("#login").val("");
+                    $("#password").val("");
+                    $("login").parent().addClass("has-error");
+                    $("#password").parent().addClass("has-error");
+                    $("#modalBodyMessage").text(data.responseText);
+                    $("#loader").removeClass("loader");
+                    $("#modalMessage").modal("show");
+                }
+            }).done(function (data) {
                 console.log(data);
-                console.log("Could not log in!");
-                $("#login").val("");
-                $("#password").val("");
-                $("login").parent().addClass("has-error");
-                $("#password").parent().addClass("has-error");
-                $("#modalBodyMessage").text(data.responseText);
-                $("#modalMessage").modal("show");
-            }
-        }).done(function (data) {
-            console.log(data);
-        });
+            });
+        }, 1000);
     }
 </script>
