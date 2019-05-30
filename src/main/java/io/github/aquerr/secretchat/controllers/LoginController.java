@@ -34,16 +34,40 @@ public class LoginController
     }
 
     @GetMapping("/login")
-    public String login(final Model model)
+    public String login(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, final Model model)
     {
+        if(httpServletRequest.getSession().getAttribute("username") != null)
+        {
+            try
+            {
+                httpServletResponse.sendRedirect("/myprofile");
+            }
+            catch(IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
         model.addAttribute("content", "login");
         model.addAttribute("title", "Zaloguj");
         return "main";
     }
 
     @GetMapping("/register")
-    public String register(final Model model)
+    public String register(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, final Model model)
     {
+        if(httpServletRequest.getSession().getAttribute("username") != null)
+        {
+            try
+            {
+                httpServletResponse.sendRedirect("/myprofile");
+            }
+            catch(IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
         model.addAttribute("content", "register");
         model.addAttribute("title", "Zarejestruj");
         return "main";

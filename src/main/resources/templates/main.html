@@ -28,5 +28,34 @@
 
 <div th:replace="fragments/footer"></div>
 
+<div class="hamburger-menu">
+    <a href="#hamburger-menu-panel">
+        <div class="box">
+            <div class="hamburger-button not-active">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </a>
+</div>
+<div id="hamburger-menu-panel">
+    <nav>
+        <a class="link" href="/login">Zaloguj</a>
+        <a class="link" href="/register">Zarejestruj</a>
+    </nav>
+</div>
+
 </body>
+
+<script>
+    var btn = $('.hamburger-button');
+
+    btn.on('click', function() {
+        $(this).toggleClass('active');
+        $(this).toggleClass('not-active');
+        $(document.body).toggleClass("hamburger-menu-panel-visible");
+    });
+</script>
+
 </html>
