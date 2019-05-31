@@ -1,8 +1,8 @@
-<div class="container" style="min-height: 600px;">
-    <h1>The journey with SecretChat starts here.</h1>
+<div class="container" style="height: 700px;">
+    <h1>Twoja przygoda z Sekretnym Czatem zaczyna się tutaj!</h1>
 
     <div>
-        <p th:text="'Hello, ' + ${message}"></p>
+<!--        <p th:text="'Hello, ' + ${message}"></p>-->
         <p th:if="${not #strings.isEmpty(username)}" th:text="'Logged in as ' + ${username}"></p>
     </div>
 <!--    <button type="button" class="btn btn-primary">Click Me!</button>-->

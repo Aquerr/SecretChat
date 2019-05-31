@@ -1,6 +1,7 @@
 package io.github.aquerr.secretchat.controllers;
 
 import io.github.aquerr.secretchat.models.User;
+import io.github.aquerr.secretchat.security.RequireAuthorization;
 import io.github.aquerr.secretchat.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,25 +28,11 @@ public class UserController
         this.userService = userService;
     }
 
+    @RequireAuthorization
     @GetMapping(path = "/myprofile")
     public String myprofile(final Model model, final HttpServletResponse httpServletResponse)
     {
         final Object usernameObject = RequestContextHolder.currentRequestAttributes().getAttribute("username", RequestAttributes.SCOPE_SESSION);
-
-        if (usernameObject == null)
-        {
-            //TODO: Throw an error here...
-            try
-            {
-                httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "You must be logged in to view this page.");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            model.addAttribute("content", "index");
-            return "main";
-        }
 
         final String username = (String) usernameObject;
         final User user = this.userService.getUser(username);
