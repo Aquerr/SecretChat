@@ -110,7 +110,7 @@ public class LoginController
         if (user != null)
         {
             httpServletRequest.getSession().setAttribute("username", user.getName());
-//            model.addAttribute("username", user.getName());
+//            model.addAttribute("username", user.getGender());
         }
         else
         {

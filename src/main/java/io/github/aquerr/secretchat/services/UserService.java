@@ -1,5 +1,6 @@
 package io.github.aquerr.secretchat.services;
 
+import io.github.aquerr.secretchat.models.Gender;
 import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.models.UserCredentials;
 import io.github.aquerr.secretchat.repositories.UserRepository;
@@ -107,7 +108,7 @@ public class UserService
             return null;
 
         final UserCredentials userCredentials = new UserCredentials(newId, login, emailAddress, base64EncodedPasswordWithSalt);
-        final User user = new User(newId, login, emailAddress, 0, "", "", LocalDate.now());
+        final User user = new User(newId, login, emailAddress, 0, Gender.UNDEFINED, "", "", LocalDate.now(), "");
 
         this.userRepository.addUserCredentials(userCredentials);
         this.userRepository.addUser(user);

@@ -1,14 +1,30 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <div class="container" style="min-height: 800px;">
     <div class="profile">
-            <div class="row">
-<!--                <img th:src="${user.avatar}">-->
-                <div class="col-md-2" th:text="${user.name}"></div>
-                <div class="col-md-2" th:text="${user.age}"></div>
-                <div class="col-md-2" th:text="${user.location}"></div>
+        <span id="edit-button" class="float-right"><i style="cursor: pointer;" class="fas fa-edit fa-lg"></i></span>
+        <div>
+            <div style="float: left;">
+                <img style="width: 80px; height: 80px; display: inline-block;" th:src="${user.avatarPath}">
             </div>
-            <div class="row" th:text="${user.description}"></div>
-        <span><i class="fa-pen"></i></span>
+            <div class="profile-content" style="margin-left: 80px; height: 80px;">
+                <div style="display: block;">
+                    <div style="display: inline-block">Status: <span style="background-color: forestgreen; padding: 2px; color: #ffffff;">Online</span></div>
+                    <div style="display: inline-block" th:text="'Rejestracja: ' + ${user.registrationDate}"></div>
+                </div>
+                <div style="width: auto; display: block">
+                    <div style="display: inline-block; font-weight: bold;" th:text="${user.name}"></div>
+                    <div style="display: inline-block" th:text="'Płeć: ' + (${user.gender.toString()} == 'MALE' ? 'Mężczyzna' : (${user.gender.toString()} == 'UNDEFINED' ? '' : 'Kobieta'))"></div>
+                    <div style="display: inline-block" th:text="'Wiek: ' + ${user.age}"></div>
+                    <div style="display: inline-block" th:text="'Lokacja: ' + ${user.location}"></div>
+                    <div style="display: inline-block">Budowa Ciała: </div>                </div>
+                <div style="width: auto; display:block;">
+                    <div th:text="${user.description}"></div>
+                </div>
+            </div>
+        </div>
+        <div style="width: auto; display: block;">
+            <input placeholder="Wpisz nazwę utworu...">
+        </div>
     </div>
     <div class="chats-container" hidden>
         <div class="chat-tab">
@@ -27,4 +43,17 @@
         <span class="message-body"></span>
     </p>
 </div>
+
+<script>
+    $(document).ready(function () {
+        console.log("Registering event...");
+        $("#edit-button").on("click", function () {
+            $("#loader").addClass("loader");
+            $("#modalBodyMessage").text("Strona edycji profilu nie jest jeszcze dostępna.");
+            $("#loader").removeClass("loader");
+            $("#modalMessage").modal("show");
+        });
+    })
+</script>
+
 </html>

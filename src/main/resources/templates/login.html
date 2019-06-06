@@ -15,25 +15,6 @@
         </form>
 </div>
 
-<div id="modalMessage" tabindex="-1" class="modal fade" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Błąd!</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" style="float: right;">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p id="modalBodyMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     $(document).ready(function () {
         $("#loginForm").submit(function (event) {
@@ -77,7 +58,7 @@
                     console.log("Could not log in!");
                     $("#login").val("");
                     $("#password").val("");
-                    $("login").parent().addClass("has-error");
+                    $("#login").parent().addClass("has-error");
                     $("#password").parent().addClass("has-error");
                     $("#modalBodyMessage").text(data.responseText);
                     $("#loader").removeClass("loader");

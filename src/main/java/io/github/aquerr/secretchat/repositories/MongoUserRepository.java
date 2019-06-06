@@ -3,6 +3,7 @@ package io.github.aquerr.secretchat.repositories;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
+import io.github.aquerr.secretchat.models.Gender;
 import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.models.UserCredentials;
 import org.bson.Document;
@@ -85,10 +86,13 @@ public class MongoUserRepository implements UserRepository
             final String name = document.getString("name");
             final String email = document.getString("email");
             final Integer age = document.getInteger("age");
+            final String genderString = String.valueOf(document.getOrDefault("gender", Gender.UNDEFINED.toString()));
+            final Gender gender = genderString.equals("") ? Gender.UNDEFINED : Gender.valueOf(genderString);
             final String location = document.getString("location");
             final String description = document.getString("description");
+            final String avatarPath = document.getString("avatarPath");
             final LocalDate registrationDate = LocalDate.parse(document.getString("registrationDate"));
-            users.add(new User(id, name, email, age, location, description, registrationDate));
+            users.add(new User(id, name, email, age, gender, location, description, registrationDate, avatarPath));
         }
         return users;
     }

@@ -18,49 +18,30 @@
                 <input class="form-control" id="repeatedPassword" type="password" aria-hidden="true" placeholder="Powtórz hasło" required>
             </div>
             <div class="form-group">
-                <button class="btn btn-outline-primary btn-block" type="button" id="register">Zarejestruj</button>
+                <button class="btn btn-outline-primary btn-block" type="submit" id="register">Zarejestruj</button>
             </div>
         </form>
     </div>
-
-    <div id="modalMessage" tabindex="-1" class="modal fade" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Błąd!</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" style="float: right;">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="modalBodyMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <script>
-   $("#register").on("click", function () {
-     postUser();
-   });
+    $(document).ready(function () {
+        $("#loginForm").submit(function (event) {
+            event.preventDefault();
+
+            postUser();
+        });
+
+        $("#modalMessage").on("hidden.bs.modal", function () {
+            $("#modalBodyMessage").text("");
+        })
+    });
 
     function postUser() {
+        $("#loader").addClass("loader");
         console.log("Registering...");
         let username = $("#username").val();
         let password = $("#password").val();
         let repeatedPassword = $("#repeatedPassword").val();
         let email = $("#email").val();
-
-        // let cookies = window.cookie;
-        // console.log(cookies);
-
-        // window.cookie = "username=Nerdi; expires=Fri, 3 Aug 2019 20:47:11 UTC; path=/";
-        // console.log(window.cookie);
-        // window.cookie = "username=Nerdi; token=2213841273";
-        // console.log(window.cookie);
 
         //TODO: Add method for checking input fields...
 
@@ -85,11 +66,24 @@
             error: function(data) {
                 console.log("error!");
                 console.log(data);
-                if(data.responseText === "406 This email is already in use!")
-                {
-                    $("#email").val("");
-                    $("#email").parent().addClass("has-error");
-                }
+
+                $("#username").val("");
+                $("#password").val("");
+                $("#repeatedPassword").val("");
+                $("#email").val("");
+                $("#username").parent().addClass("has-error");
+                $("#password").parent().addClass("has-error");
+                $("#repeatedPassword").parent().addClass("has-error");
+                $("#email").parent().addClass("has-error");
+                $("#modalBodyMessage").text(data.responseText);
+                $("#loader").removeClass("loader");
+                $("#modalMessage").modal("show");
+
+                // if(data.responseText === "406 This email is already in use!")
+                // {
+                //     $("#email").val("");
+                //     $("#email").parent().addClass("has-error");
+                // }
                 // if(data.responseText === "400 Email Address is not in correct format.")
                 // {
                 //     $("#email").val("");

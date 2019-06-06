@@ -16,6 +16,9 @@ public class User
     private final int age;
 
     @JsonProperty(required = true)
+    private final Gender gender;
+
+    @JsonProperty(required = true)
     private final String location;
 
     @JsonProperty(required = true)
@@ -24,19 +27,24 @@ public class User
     @JsonProperty(required = true)
     private final String email;
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private final LocalDate registrationDate;
 
-    public User(final int id, final String name, String email, final int age, final String location, final String description, final LocalDate registrationDate)
+    @JsonProperty(required = true)
+    private final String avatarPath;
+
+    public User(final int id, final String name, String email, final int age, final Gender gender, final String location, final String description, final LocalDate registrationDate, final String avatarPath)
     {
         this.id = id; //0 = new user in the storage
 
         this.name = name;
         this.email = email;
         this.age = age;
+        this.gender = gender;
         this.location = location;
         this.description = description;
         this.registrationDate = registrationDate;
+        this.avatarPath = avatarPath;
     }
 
     public int getId()
@@ -72,5 +80,15 @@ public class User
     public LocalDate getRegistrationDate()
     {
         return registrationDate;
+    }
+
+    public String getAvatarPath()
+    {
+        return this.avatarPath;
+    }
+
+    public Gender getGender()
+    {
+        return gender;
     }
 }
