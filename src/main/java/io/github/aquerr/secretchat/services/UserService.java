@@ -154,6 +154,17 @@ public class UserService
 //            }
     }
 
+    public User getUser(final String username)
+    {
+        final List<User> userList = this.userRepository.getUsers();
+        return userList.stream().filter(x->x.getName().equals(username)).findFirst().orElse(null);
+    }
+
+    public boolean deleteUser(final int userId)
+    {
+        return this.userRepository.deleteUser(userId);
+    }
+
     public synchronized boolean isLoginAvailable(final String login)
     {
         final List<UserCredentials> userCredentialsList = this.userRepository.getUserCredentials();
@@ -238,11 +249,5 @@ public class UserService
         byte[] hashBytes = secretKeyFactory.generateSecret(keySpec).getEncoded();
 
         return Arrays.equals(passwordBytes, hashBytes);
-    }
-
-    public User getUser(final String username)
-    {
-        final List<User> userList = this.userRepository.getUsers();
-        return userList.stream().filter(x->x.getName().equals(username)).findFirst().orElse(null);
     }
 }

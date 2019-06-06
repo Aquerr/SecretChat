@@ -12,17 +12,17 @@ public interface UserRepository
 
     List<User> getUsers();
 
-    Optional<User> getUser(String id);
+    Optional<User> getUser(int id);
 
     void addUser(User user);
 
     void updateUser(User user);
 
-    void deleteUser(String id);
+    boolean deleteUser(int id);
 
     void addUserCredentials(UserCredentials userCredentials);
 
     void updateUserCredentials(UserCredentials userCredentials);
 
-    void deleteUserCredentials(String id);
+    void deleteUserCredentials(int id);
 }

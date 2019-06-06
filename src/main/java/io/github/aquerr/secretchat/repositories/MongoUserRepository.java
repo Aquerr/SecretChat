@@ -2,6 +2,7 @@ package io.github.aquerr.secretchat.repositories;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import io.github.aquerr.secretchat.models.User;
 import io.github.aquerr.secretchat.models.UserCredentials;
 import org.bson.Document;
@@ -130,9 +131,22 @@ public class MongoUserRepository implements UserRepository
     }
 
     @Override
-    public void deleteUser(final String id)
+    public boolean deleteUser(final int id)
     {
+        boolean hasDeletedCredentials = false;
+        boolean hasDeletedUser = false;
 
+        final MongoCollection<Document> usersCredentials = this.mongoDatabase.getCollection("usercredentials");
+        DeleteResult deleteResult = usersCredentials.deleteOne(Filters.eq("_id", id));
+        if(deleteResult.getDeletedCount() == 1)
+            hasDeletedCredentials = true;
+
+        final MongoCollection<Document> users = this.mongoDatabase.getCollection("users");
+        DeleteResult deleteResult1 = users.deleteOne(Filters.eq("_id", id));
+        if(deleteResult1.getDeletedCount() == 1)
+            hasDeletedUser = true;
+
+        return hasDeletedCredentials && hasDeletedUser;
     }
 
     public void addUserCredentials(final UserCredentials userCredentials)
@@ -153,12 +167,13 @@ public class MongoUserRepository implements UserRepository
     }
 
     @Override
-    public void deleteUserCredentials(final String id)
+    public void deleteUserCredentials(final int id)
     {
 
     }
 
-    public Optional<User> getUser(final String id)
+    @Override
+    public Optional<User> getUser(final int id)
     {
         final User user = this.mongoDatabase.getCollection("users").find(Filters.eq("_id", id), User.class).first();
         if (user != null)

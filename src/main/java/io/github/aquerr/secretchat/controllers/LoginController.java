@@ -74,7 +74,7 @@ public class LoginController
     }
 
     @ResponseBody
-    @PostMapping(path = "/login", produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(path = "/login", produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> login(@RequestBody(required = false) final Map<String, Object> credentials, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, final Model model) throws IOException
     {
         if(credentials == null || !credentials.containsKey("login") || !credentials.containsKey("password"))
@@ -138,41 +138,19 @@ public class LoginController
         final String emailAddress = String.valueOf(jsonNode.get("email"));
 
         if (!EMAIL_PATTERN.matcher(emailAddress).matches())
-        {
             return ResponseEntity.badRequest().body("Email Address is not in correct format.");
-        }
-
         if (username.equals("") || password.equals("") || repeatedPassword.equals("") || emailAddress.equals(""))
-        {
-//            httpServletResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Not all fields have been specified.");
             return ResponseEntity.badRequest().body("Not all fields have been specified.");
-        }
-
-        //TODO: Consider if this check is necessary. Having it only in the view should be fine.
         if (!password.equals(repeatedPassword))
-        {
-//            httpServletResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Passwords are not the same!");
             return ResponseEntity.badRequest().body("Passwords are not the same!");
-        }
-
         if (!this.userService.isLoginAvailable(username))
-        {
-//            httpServletResponse.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "This login is already in use!");
             return ResponseEntity.badRequest().body("This login is already in use!");
-        }
         if (!this.userService.isEmailAvailable(emailAddress))
-        {
-//            httpServletResponse.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "This email is already in use!");
             return ResponseEntity.badRequest().body("This email is already in use!");
-        }
 
-//        final Object nameTest = httpServletRequest.getSession().getAttribute("username");
-//        httpServletRequest.getSession().setAttribute("username", "Nerdi");
-//        httpServletResponse.addCookie(new Cookie("username", "Nerdi"));
         final User user = this.userService.register(username, password, emailAddress);
         LOGGER.info(username + " successfully registered.");
         return ResponseEntity.ok(user);
-//        return new User(1, "Test", 1, "Test", "Test");
     }
 
     @GetMapping(path = "logout")

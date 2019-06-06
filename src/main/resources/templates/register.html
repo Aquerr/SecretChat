@@ -79,7 +79,8 @@
             data: JSON.stringify(json),
             success: function(data) {
                 console.log("success!");
-                console.log(JSON.stringify(data));
+                // console.log(JSON.stringify(data));
+                $("#loginForm").html("<h1>Rejestracja przebiegła pomyślnie!</h1>")
             },
             error: function(data) {
                 console.log("error!");
