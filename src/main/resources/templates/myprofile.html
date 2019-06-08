@@ -28,7 +28,7 @@
             <input placeholder="Wpisz nazwę utworu..."><span id="searchButton" class="input-addon"><i id="searchIcon" class="fas fa-search"></i><span id="searchButtonText"> Szukaj</span></span>
         </div>
     </div>
-    <div class="chats-container" hidden="">
+    <div class="chats-container" hidden>
         <ul class="nav nav-tabs">
 <!--            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#user1">3123mopasd213o</a></li>-->
 <!--            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#user2">0dsa_dsad_dasm0_DAS</a></li>-->
@@ -66,8 +66,8 @@
     </div>
 
     <p id="messageTemplate" hidden>
-        <span class="message-time"></span>
-        <span class="message-author"></span>:
+        <span class="message-time font-weight-bold"></span>
+        <span class="message-author font-weight-bold"></span>
         <span class="message-body"></span>
     </p>
 </div>
@@ -98,11 +98,11 @@
         });
 
         //Create socket
-        <!--var chatSocket = new WebSocket("ws://localhost:25565");-->
+        var chatSocket = new WebSocket("ws://localhost:4444");
 
-        <!--chatSocket.onmessage = function (event) {-->
-            <!--console.log(event.data);-->
-        <!--}-->
+        chatSocket.onmessage = function (event) {
+            console.log(event.data);
+        }
     })
 </script>
 

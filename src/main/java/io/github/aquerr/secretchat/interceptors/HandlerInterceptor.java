@@ -23,7 +23,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter
                 response.sendRedirect("/login");
                 return false;
             }
-            LOGGER.info(((HandlerMethod) handler).getShortLogMessage());
+//            LOGGER.info(((HandlerMethod) handler).getShortLogMessage());
         }
 
         return true;

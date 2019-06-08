@@ -1,6 +1,6 @@
 package io.github.aquerr.secretchat.services;
 
-import com.mongodb.connection.SocketSettings;
+import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,13 +21,16 @@ public class ChatService
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final Map<String, Future> socketListenerFutures = new HashMap<>();
 
-    private final ServerSocket serverSocket;
+//    private final ServerSocket serverSocket;
+    private final WebChatServer webChatServer;
 
     public ChatService() throws IOException
     {
-        this.serverSocket = new ServerSocket(25565);
-        Runnable runnable = getListenTask(serverSocket);
-        Future<?> future = executorService.submit(runnable);
+        this.webChatServer = new WebChatServer();
+        this.webChatServer.start();
+//        this.serverSocket = new ServerSocket(4444);
+//        Runnable runnable = getListenTask(serverSocket);
+//        Future<?> future = executorService.submit(runnable);
 //        socketListenerFutures.put(name, future);
 //        chatServerSockets.put(name, serverSocket);
     }
@@ -37,7 +40,7 @@ public class ChatService
         return chatServerSockets;
     }
 
-    public void addServerSocket(String name, ServerSocket serverSocket)
+    public void addServerSocket(String name, WebSocket webSocket)
     {
         //If serverSocket exists for this name then delete it.
         if(socketListenerFutures.containsKey(name))
@@ -54,35 +57,40 @@ public class ChatService
             }
             chatServerSockets.remove(name);
         }
-        Runnable runnable = getListenTask(serverSocket);
-        Future<?> future = executorService.submit(runnable);
-        socketListenerFutures.put(name, future);
-        chatServerSockets.put(name, serverSocket);
+//        Runnable runnable = getListenTask(webSocket);
+//        Future<?> future = executorService.submit(runnable);
+//        socketListenerFutures.put(name, future);
+//        chatServerSockets.put(name, webSocket);
     }
 
-    private Runnable getListenTask(ServerSocket serverSocket)
+    public void broadcastMessage(final String message)
     {
-        return new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                while(!Thread.interrupted())
-                {
-                    try
-                    {
-                        final Socket socket = serverSocket.accept();
-                        final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-                        printWriter.println("TEST!");
-                        printWriter.close();
-                        socket.close();
-                    }
-                    catch(IOException ex)
-                    {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        };
+        this.webChatServer.broadcast(message);
     }
+
+//    private Runnable getListenTask(WebSocket serverSocket)
+//    {
+//        return new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                while(!Thread.interrupted())
+//                {
+//                    try
+//                    {
+//                        final Socket socket = serverSocket.accept();
+//                        final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+//                        printWriter.println("TEST!");
+//                        printWriter.close();
+//                        socket.close();
+//                    }
+//                    catch(IOException ex)
+//                    {
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
+//        };
+//    }
 }
