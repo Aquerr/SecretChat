@@ -6,32 +6,60 @@
             <div style="float: left;">
                 <img style="width: 80px; height: 80px; display: inline-block;" th:src="${user.avatarPath}">
             </div>
-            <div class="profile-content" style="margin-left: 80px; height: 80px;">
+            <div class="profile-content">
                 <div style="display: block;">
-                    <div style="display: inline-block">Status: <span style="background-color: forestgreen; padding: 2px; color: #ffffff;">Online</span></div>
+                    <div style="display: inline-block"><span style="background-color: forestgreen; color: #ffffff; padding-left: 5px; padding-right: 5px;">Dostępny</span></div>
                     <div style="display: inline-block" th:text="'Rejestracja: ' + ${user.registrationDate}"></div>
                 </div>
                 <div style="width: auto; display: block">
-                    <div style="display: inline-block; font-weight: bold;" th:text="${user.name}"></div>
-                    <div style="display: inline-block" th:text="'Płeć: ' + (${user.gender.toString()} == 'MALE' ? 'Mężczyzna' : (${user.gender.toString()} == 'UNDEFINED' ? '' : 'Kobieta'))"></div>
+                    <div style="display: inline-block; font-weight: bold;"th:text="${user.name}"></div>
+                    <div style="display: inline-block" th:text="' | Płeć: ' + (${user.gender.name()} == 'MALE' ? 'Mężczyzna' : (${user.gender.name()} == 'UNDEFINED' ? '' : 'Kobieta'))"></div>
                     <div style="display: inline-block" th:text="'Wiek: ' + ${user.age}"></div>
                     <div style="display: inline-block" th:text="'Lokacja: ' + ${user.location}"></div>
-                    <div style="display: inline-block">Budowa Ciała: </div>                </div>
+                    <div style="display: inline-block">Budowa Ciała: </div>
+                </div>
                 <div style="width: auto; display:block;">
                     <div th:text="${user.description}"></div>
                 </div>
             </div>
         </div>
-        <div style="width: auto; display: block;">
-            <input placeholder="Wpisz nazwę utworu...">
+        <hr>
+        <div style="width: auto; display: table">
+            <input placeholder="Wpisz nazwę utworu..."><span id="searchButton" class="input-addon"><i id="searchIcon" class="fas fa-search"></i><span id="searchButtonText"> Szukaj</span></span>
         </div>
     </div>
-    <div class="chats-container" hidden>
-        <div class="chat-tab">
-            <label class="chat-tab-label"></label>
+    <div class="chats-container" hidden="">
+        <ul class="nav nav-tabs">
+<!--            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#user1">3123mopasd213o</a></li>-->
+<!--            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#user2">0dsa_dsad_dasm0_DAS</a></li>-->
+        </ul>
+<!--        <div class="chat-tab">-->
+<!--            <label class="chat-tab-label"></label>-->
+<!--        </div>-->
+        <div class="tab-content">
+            <div id="user1" class="tab-pane fade in active">
+                <div class="chat-content"></div>
+                <div class="chat-input">
+                    <input placeholder="Wprowadź tu swoją wiadomość">
+                </div>
+            </div>
+            <div id="user2" class="tab-pane fade">
+                <div class="chat-content"></div>
+                <div class="chat-input">
+                    <input placeholder="Wprowadź tu swoją wiadomość">
+                </div>
+            </div>
         </div>
-        <input placeholder="Wprowadź tu swoją wiadomość">
     </div>
+
+    <div id="chatTabPaneTemplate" hidden="true">
+        <div class="chat-content"></div>
+        <div class="chat-input">
+            <input placeholder="Wprowadź tu swoją wiadomość">
+        </div>
+    </div>
+
+    <li id="tab-nav-template" hidden="true" class="nav-item"><a class="nav-link active" data-toggle="tab" href=""></a></li>
 
     <div class="chat-tab-template" hidden>
         <label class="chat-tab-label"></label>
@@ -53,6 +81,28 @@
             $("#loader").removeClass("loader");
             $("#modalMessage").modal("show");
         });
+
+        $("#searchButton").on("click", function () {
+            console.log("search click!");
+            $("#searchButtonText").text("");
+            $("#searchIcon").removeClass();
+            $("#searchIcon").addClass("fas fa-circle-notch fa-spin");
+
+            //Replace this timeout with function that searches for a youtube video
+            setTimeout(function () {
+                $("#searchButtonText").text(" Szukaj");
+                $("#searchIcon").removeClass();
+                $("#searchIcon").addClass("fas fa-search");
+                console.log("BOOM");
+            }, 2000)
+        });
+
+        //Create socket
+        <!--var chatSocket = new WebSocket("ws://localhost:25565");-->
+
+        <!--chatSocket.onmessage = function (event) {-->
+            <!--console.log(event.data);-->
+        <!--}-->
     })
 </script>
 
