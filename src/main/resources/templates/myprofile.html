@@ -28,51 +28,79 @@
             <input placeholder="Wpisz nazwę utworu..."><span id="searchButton" class="input-addon"><i id="searchIcon" class="fas fa-search"></i><span id="searchButtonText"> Szukaj</span></span>
         </div>
     </div>
-    <div class="chats-container" hidden>
-        <ul class="nav nav-tabs">
+    <div id="chatsContainer" class="chats-container" hidden>
+        <ul id="chatsTabNav" class="nav nav-tabs">
 <!--            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#user1">3123mopasd213o</a></li>-->
 <!--            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#user2">0dsa_dsad_dasm0_DAS</a></li>-->
         </ul>
 <!--        <div class="chat-tab">-->
 <!--            <label class="chat-tab-label"></label>-->
 <!--        </div>-->
-        <div class="tab-content">
-            <div id="user1" class="tab-pane fade in active">
-                <div class="chat-content"></div>
-                <div class="chat-input">
-                    <input placeholder="Wprowadź tu swoją wiadomość">
-                </div>
-            </div>
-            <div id="user2" class="tab-pane fade">
-                <div class="chat-content"></div>
-                <div class="chat-input">
-                    <input placeholder="Wprowadź tu swoją wiadomość">
-                </div>
-            </div>
+        <div id="tabsContainer" class="tab-content">
+<!--            <div id="user1" class="tab-pane fade in active">-->
+<!--                <div class="chat-content"></div>-->
+<!--                <div class="chat-input">-->
+<!--                    <input placeholder="Wprowadź tu swoją wiadomość">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div id="user2" class="tab-pane fade">-->
+<!--                <div class="chat-content"></div>-->
+<!--                <div class="chat-input">-->
+<!--                    <input placeholder="Wprowadź tu swoją wiadomość">-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 
-    <div id="chatTabPaneTemplate" hidden="true">
-        <div class="chat-content"></div>
-        <div class="chat-input">
-            <input placeholder="Wprowadź tu swoją wiadomość">
+    <div hidden>
+        <div id="chatTabPaneTemplate" class="tab-pane fade in">
+            <div class="chat-content"></div>
+            <div class="chat-input">
+                <input placeholder="Wprowadź tu swoją wiadomość">
+            </div>
         </div>
+
+        <li id="tabNavTemplate" class="nav-item"><a class="nav-link active" data-toggle="tab" href=""></a></li>
+
+<!--        <div class="chat-tab-template">-->
+<!--            <label class="chat-tab-label"></label>-->
+<!--        </div>-->
+
+        <p id="messageTemplate">
+            <span class="message-time font-weight-bold"></span>
+            <span class="message-author font-weight-bold"></span>
+            <span class="message-body"></span>
+        </p>
     </div>
-
-    <li id="tab-nav-template" hidden="true" class="nav-item"><a class="nav-link active" data-toggle="tab" href=""></a></li>
-
-    <div class="chat-tab-template" hidden>
-        <label class="chat-tab-label"></label>
-    </div>
-
-    <p id="messageTemplate" hidden>
-        <span class="message-time font-weight-bold"></span>
-        <span class="message-author font-weight-bold"></span>
-        <span class="message-body"></span>
-    </p>
 </div>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var currentUsername = /*[[${user.name}]]*/ 'username';
+
+    /*]]>*/
+
+    var chatSocket = undefined;
+
+    function formatTime(date) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+        let hoursAsString = hours.toString();
+        let minutesAsString = minutes.toString();
+
+        if (hoursAsString.length === 1) {
+            hoursAsString = "0" + hoursAsString;
+        }
+
+        if (minutesAsString.length === 1) {
+            minutesAsString = "0" + minutesAsString;
+        }
+
+        return hoursAsString + ":" + minutesAsString;
+    }
+
     $(document).ready(function () {
         console.log("Registering event...");
         $("#edit-button").on("click", function () {
@@ -97,13 +125,102 @@
             }, 2000)
         });
 
+        $("#messageInput").keydown(function (event) {
+            if (event.key === "Enter" || event.code === "Enter") {
+                messageInput();
+            }
+        });
+
         //Create socket
-        var chatSocket = new WebSocket("ws://localhost:4444");
+        console.log("Connecting to WebSocket Server...");
+        chatSocket = new WebSocket("ws://192.168.0.11:4444");
+        console.log("Connected!");
+
+        chatSocket.onopen = function (event) {
+            let json = {};
+            json["from"] = currentUsername;
+            json["type"] = "handshake";
+            console.log(json);
+            chatSocket.send(JSON.stringify(json));
+        };
 
         chatSocket.onmessage = function (event) {
             console.log(event.data);
+
+            let receivedData = JSON.parse(event.data);
+            console.log(receivedData);
+            console.log(receivedData["type"]);
+            if (receivedData["type"] !== undefined && receivedData["type"] === "handshake") {
+                //Open new chat tab
+                console.log("Opening new chat tab...");
+
+                if ($("#chatsContainer").attr("hidden")) {
+                    console.log("Removing hidden attribute...");
+                    $("#chatsContainer").removeAttr('hidden');
+                    // $("#chatsContainer").show("slow");
+                    console.log("Showing chatsContainer...");
+                }
+
+                let tabNavTemplate = $("#tabNavTemplate").clone();
+                tabNavTemplate.attr("id", receivedData["from"]);
+                tabNavTemplate.find(".nav-link").text(receivedData["from"]);
+                tabNavTemplate.find(".nav-link").attr("href", "#" + receivedData["from"] + "-tab")
+                $("#chatsTabNav").append(tabNavTemplate);
+
+                let chatTabPaneTemplate = $("#chatTabPaneTemplate").clone();
+                chatTabPaneTemplate.attr("id", receivedData["from"] + "-tab");
+                chatTabPaneTemplate.find(".chat-content").attr("id", receivedData["from"] + "-chat");
+                chatTabPaneTemplate.addClass("active show");
+
+                //Setup input field
+                $("#tabsContainer").append(chatTabPaneTemplate);
+                console.log(chatTabPaneTemplate);
+                let inputField = chatTabPaneTemplate.find(".chat-input input");
+                console.log(inputField);
+                inputField.attr("id", receivedData["from"] + "-input");
+
+                inputField.keydown(function (event) {
+                    if (event.key === "Enter" || event.code === "Enter") {
+                        sendMessage(this);
+                    }
+                });
+            }
+            else if (receivedData["type"] !== undefined && receivedData["type"] === "message") {
+                //Find correct tab
+                let chatContent = $("#chatsContainer").find("#" + receivedData["from"] + "-chat");
+
+                let messageTemplate = $("#messageTemplate").clone();
+                messageTemplate.find(".message-time").text(formatTime(new Date())); //Time should be sent from the server
+                messageTemplate.find(".message-author").text(receivedData["from"] + ": ");
+                messageTemplate.find(".message-body").text($("#messageInput").val());
+                chatContent.append(messageTemplate);
+            }
         }
-    })
+    });
+
+    function sendMessage(inputElement) {
+        console.log(inputElement);
+        let inputId = inputElement.id;
+        let toUser = inputId.substring(0, inputId.length - 6);
+
+        console.log("Input Id = " + inputId);
+        console.log("To User = " + toUser);
+
+        let json = {};
+        json["from"] = currentUsername;
+        json["to"] = toUser;
+        json["type"] = "message";
+        json["message"] = inputElement.value;
+        chatSocket.send(JSON.stringify(json));
+
+        let messageTemplate = $("#messageTemplate").clone();
+        messageTemplate.find(".message-time").text(formatTime(new Date()))
+        messageTemplate.find(".message-author").text("Ty: ");
+        messageTemplate.find(".message-body").text(inputElement.value);
+        $("#" + toUser + "-chat").append(messageTemplate);
+        //Clear message input field
+        inputElement.value = "";
+    }
 </script>
 
 </html>

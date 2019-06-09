@@ -159,6 +159,17 @@
 
             chatSocket.onmessage = function (event) {
                 console.log(event.data);
+                let receivedData = JSON.parse(event.data);
+
+                if (receivedData["type"] !== undefined && receivedData["type"] === "message" && receivedData["message"] !== undefined) {
+                    console.log("Preparing incoming message...");
+                    let messageTemplate = $("#messageTemplate").clone();
+                    messageTemplate.find(".message-time").text(formatTime(new Date())); //Time should be sent from the server
+                    messageTemplate.find(".message-author").text(receivedData["from"] + ": ");
+                    messageTemplate.find(".message-body").text(receivedData["message"]);
+                    messageTemplate.attr("hidden", false); //TODO: Remove this...
+                    $("#chatContent").append(messageTemplate);
+                }
             };
 
             chatSocket.onopen = function (event) {
