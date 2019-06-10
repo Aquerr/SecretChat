@@ -113,6 +113,9 @@
         });
 
         $("#messageInput").keydown(function (event) {
+            // $("#messageInput").val(event.key + " | " + event.code);
+            // console.log("Event Key:" + event.key);
+            // console.log("Event Code: " + event.code);
             if (event.key === "Enter" || event.code === "Enter") {
                 messageInput();
             }

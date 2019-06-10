@@ -78,6 +78,7 @@
     /*<![CDATA[*/
 
     var currentUsername = /*[[${user.name}]]*/ 'username';
+    var webSocketUrl = /*[[${webSocketUrl}]]*/ 'webSocketUrl';
 
     /*]]>*/
 
@@ -133,7 +134,7 @@
 
         //Create socket
         console.log("Connecting to WebSocket Server...");
-        chatSocket = new WebSocket("ws://192.168.0.11:4444");
+        chatSocket = new WebSocket(webSocketUrl);
         console.log("Connected!");
 
         chatSocket.onopen = function (event) {
@@ -187,12 +188,11 @@
             }
             else if (receivedData["type"] !== undefined && receivedData["type"] === "message") {
                 //Find correct tab
-                let chatContent = $("#chatsContainer").find("#" + receivedData["from"] + "-chat");
-
+                let chatContent = $("#" + receivedData["from"] + "-chat");
                 let messageTemplate = $("#messageTemplate").clone();
                 messageTemplate.find(".message-time").text(formatTime(new Date())); //Time should be sent from the server
                 messageTemplate.find(".message-author").text(receivedData["from"] + ": ");
-                messageTemplate.find(".message-body").text($("#messageInput").val());
+                messageTemplate.find(".message-body").text(receivedData["message"]);
                 chatContent.append(messageTemplate);
             }
         }

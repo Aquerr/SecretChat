@@ -17,28 +17,38 @@ public class WebChatServer extends WebSocketServer
 {
     private static final int TCP_PORT = 4444;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private Set<WebSocket> connections;
-    private Map<ChatUser, WebSocket> chatUserWebSocketMap = new HashMap<>();
+//    private final Set<WebSocket> connections;
+    private final Set<ChatUser> chatUsers;
 //    private Map<String, WebSocket>
 
     public WebChatServer()
     {
         super(new InetSocketAddress(TCP_PORT));
-        connections = new HashSet<>();
+//        connections = new HashSet<>();
+        chatUsers = new HashSet<>();
     }
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake)
     {
-        connections.add(conn);
+//        connections.add(conn);
         System.out.println("New chat connection from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote)
     {
-        connections.remove(conn);
+//        connections.remove(conn);
         System.out.println("Closed connection to " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+        ChatUser chatUserToDelete = null;
+        for(ChatUser chatUser : this.chatUsers)
+        {
+            if(chatUser.getWebSocket().equals(conn))
+            {
+                chatUserToDelete = chatUser;
+            }
+        }
+        this.chatUsers.remove(chatUserToDelete);
     }
 
     @Override
@@ -61,19 +71,19 @@ public class WebChatServer extends WebSocketServer
             final String from = objectNode.get("from").textValue();
 
             final UUID uuid = UUID.randomUUID();
-            final ChatUser chatUser = new ChatUser(uuid, from);
-            chatUserWebSocketMap.put(chatUser, conn);
+            final ChatUser chatUser = new ChatUser(conn, uuid, from);
+            this.chatUsers.add(chatUser);
 
             if(objectNode.has("to") && !objectNode.get("to").textValue().equals(""))
             {
                 final String toUserName = objectNode.get("to").textValue();
 
                 //Inform other user about handshake
-                for(ChatUser chatUserInSet : chatUserWebSocketMap.keySet())
+                for(ChatUser chatUserInSet : this.chatUsers)
                 {
                     if(chatUserInSet.getUsername().equals(toUserName))
                     {
-                        final WebSocket webSocket = chatUserWebSocketMap.get(chatUserInSet);
+                        final WebSocket webSocket = chatUserInSet.getWebSocket();
                         ObjectNode newMessage = OBJECT_MAPPER.createObjectNode();
                         newMessage.put("from", chatUser.getHiddenBehindUUID().toString());
                         newMessage.put("type", "handshake");
@@ -95,20 +105,47 @@ public class WebChatServer extends WebSocketServer
             final String from = objectNode.get("from").textValue();
             final String to = objectNode.get("to").textValue();
 
+            if(from.equals(""))
+            {
+                //Find user uuid
+                for(final ChatUser fromUser : this.chatUsers)
+                {
+                    if(fromUser.getWebSocket().equals(conn))
+                    {
+                        ((ObjectNode)objectNode).put("from", fromUser.getHiddenBehindUUID().toString());
+                    }
+                }
+            }
+
 
             if(to.split("-").length != 5)
             {
                 //Not UUID - User is probably visible...
                 //TODO: Implement code...
+                for(ChatUser chatUserInSet : this.chatUsers)
+                {
+                    if(chatUserInSet.getUsername().equals(to))
+                    {
+                        final WebSocket webSocket = chatUserInSet.getWebSocket();
+                        try
+                        {
+                            webSocket.send(OBJECT_MAPPER.writeValueAsString(objectNode));
+                        }
+                        catch(JsonProcessingException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
             else
             {
                 //UUID - Send it further to the user.
-                for(ChatUser chatUserInSet : chatUserWebSocketMap.keySet())
+                for(ChatUser chatUserInSet : this.chatUsers)
                 {
                     if(chatUserInSet.getHiddenBehindUUID().equals(UUID.fromString(to)))
                     {
-                        final WebSocket webSocket = chatUserWebSocketMap.get(chatUserInSet);
+                        final WebSocket webSocket = chatUserInSet.getWebSocket();
                         try
                         {
                             webSocket.send(OBJECT_MAPPER.writeValueAsString(objectNode));
@@ -132,11 +169,16 @@ public class WebChatServer extends WebSocketServer
     @Override
     public void onError(WebSocket conn, Exception ex)
     {
-        if(conn != null)
+        ChatUser chatUserToDelete = null;
+        for(ChatUser chatUser : this.chatUsers)
         {
-            connections.remove(conn);
+            if(chatUser.getWebSocket().equals(conn))
+            {
+                chatUserToDelete = chatUser;
+            }
         }
-        System.out.println(ex);
+        this.chatUsers.remove(chatUserToDelete);
+        ex.printStackTrace();
         System.out.println("ERROR from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
     }
 

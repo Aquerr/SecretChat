@@ -7,6 +7,7 @@ import io.github.aquerr.secretchat.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,9 @@ import java.net.Socket;
 public class UserController
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
+    @Autowired
+    private Environment environment;
 
     private final UserService userService;
     private final ChatService chatService;
@@ -48,6 +52,7 @@ public class UserController
         model.addAttribute("username", username);
         model.addAttribute("user", user);
         model.addAttribute("title", "Mój Profil");
+        model.addAttribute("webSocketUrl", environment.getProperty("chatSocketUrl"));
 //        Socket socket = new Socket();
 //        ServerSocket serverSocket = new ServerSocket(25565);
 //        this.chatService.addServerSocket(username, serverSocket);
