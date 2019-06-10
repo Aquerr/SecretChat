@@ -134,11 +134,11 @@
 
         //Create socket
         console.log("Connecting to WebSocket Server...");
-        chatSocket = new WebSocket(webSocketUrl);
-        // chatSocket = new WebSocket(webSocketUrl, {
-        //     origin: "https://" + webSocketUrl,
-        //     rejectUnauthorized: false
-        // });
+        // chatSocket = new WebSocket(webSocketUrl);
+        chatSocket = new WebSocket(webSocketUrl, {
+            origin: "https://secretchat.bartlomiejstepien.pl:6660",
+            rejectUnauthorized: false
+        });
         console.log("Connected!");
 
         chatSocket.onopen = function (event) {

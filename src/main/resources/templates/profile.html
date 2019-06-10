@@ -157,7 +157,11 @@
             console.log("ChatSocket = " + chatSocket);
             //Create socket
             console.log(webSocketUrl);
-            chatSocket = new WebSocket(webSocketUrl); //Change ip to secretchat.bartlomiejstepien.pl
+            chatSocket = new WebSocket(webSocketUrl, {
+                origin: "https://secretchat.bartlomiejstepien.pl:6660",
+                rejectUnauthorized: false
+            });
+            // chatSocket = new WebSocket(webSocketUrl); //Change ip to secretchat.bartlomiejstepien.pl
             console.log(chatSocket);
 
             chatSocket.onmessage = function (event) {
