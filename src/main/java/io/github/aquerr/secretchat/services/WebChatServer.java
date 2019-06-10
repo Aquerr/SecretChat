@@ -15,7 +15,7 @@ import java.util.*;
 
 public class WebChatServer extends WebSocketServer
 {
-    private static final int TCP_PORT = 4444;
+    private static final int TCP_PORT = 6660;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 //    private final Set<WebSocket> connections;
     private final Set<ChatUser> chatUsers;
