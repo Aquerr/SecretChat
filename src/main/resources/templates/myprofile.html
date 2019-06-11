@@ -135,13 +135,10 @@
         //Create socket
         console.log("Connecting to WebSocket Server...");
         // chatSocket = new WebSocket(webSocketUrl);
-        chatSocket = new WebSocket(webSocketUrl, {
-            origin: 'https://secretchat.bartlomiejstepien.pl:6660',
-            rejectUnauthorized: false
-        });
-        console.log("Connected!");
+        chatSocket = new WebSocket(webSocketUrl);
 
         chatSocket.onopen = function (event) {
+            console.log("Connected!");
             let json = {};
             json["from"] = currentUsername;
             json["type"] = "handshake";
